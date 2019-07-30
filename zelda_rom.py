@@ -68,7 +68,7 @@ class ZeldaRom(object):
   #   is7to9: True if accessing data for levels 7-9, False for levels 1-6
   # Returns:
   #   An array of six integers containing the raw data for the room/screen.
-  def _GetRawMapData(self, room_num: int, is7to9: bool = False) -> List[int]:
+  def _GetRawMapData(self, room_num: int, is_overworld: bool=False,is7to9: bool = False) -> List[int]:
     data = []  # type: List[int]
     start_location = self.LEVEL_1_6_DATA_LOCATION
     if is7to9:
@@ -120,7 +120,6 @@ class ZeldaRom(object):
     # Each level contains 0xFC bytes of special data before the next one starts.
     location = (self.LEVEL_ONE_START_ROOM_LOCATION + self.SPECIAL_LEVEL_DATA_OFFSET * (level_num))
     raw_value = self._ReadMemory(location, 1)[0]
-
     # return self._ToInt(raw_value)
     return raw_value
 

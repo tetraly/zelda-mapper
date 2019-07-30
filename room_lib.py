@@ -32,7 +32,7 @@ class LevelRoom(object):
 
     # Non-ROM values
     self.already_visited = False
-    self.level_num = 0
+    self.level_num = 0xff
     self.stairway_passage_room = -1
     self.stairway_passage_num = 0
     self.stairway_item = -1

@@ -7,10 +7,10 @@ from zelda_constants import Direction
 from zelda_constants import ITEMS
 
 ENTRANCE_DIRECTION_MAP = {
-  1: Direction.SOUTH,
-  2: Direction.NORTH,
-  3: Direction.EAST,
-  4: Direction.WEST
+  1: Direction.NORTH,
+  2: Direction.SOUTH,
+  3: Direction.WEST,
+  4: Direction.EAST
 }
 
 class LevelMapper(object):
@@ -31,9 +31,8 @@ class LevelMapper(object):
     for level_num in range(0, 9):
       self.start_rooms.append(rom.GetLevelStartRoomNumber(level_num))
       stairway_list = rom.GetLevelStairwayRoomNumberList(level_num)
-      entrance_direction = Direction.NORTH
-      if decode_mode:
-        entrance_direction = ENTRANCE_DIRECTION_MAP[stairway_list.pop()]
+      #entrance_direction = Direction.NORTH
+      entrance_direction = ENTRANCE_DIRECTION_MAP[stairway_list.pop()]
       self.entrance_directions.append(entrance_direction)
       self.stairway_rooms.append(stairway_list)
       self.special_items.append([])
@@ -74,8 +73,8 @@ class LevelMapper(object):
                         level_num: int,
                         missing_item: int,
                         is_entrance: bool=False) -> None:
-    if room_num > 0x7F:
-      return  # No escaping back into the overworld! :)
+    if room_num < 0x0 or room_num > 0x7F:
+      return  # Don't go outside of level grid! :)
     room = self._GetRoom(room_num, level_num)
     if room.WasAlreadyVisited():
       return
@@ -93,7 +92,7 @@ class LevelMapper(object):
     for direction in (Direction.WEST, Direction.NORTH, Direction.EAST, Direction.SOUTH):
       if room.CanMove(direction):
         # Don't leave back to the overworld
-        if is_entrance and direction == -1* entry_door:
+        if is_entrance and direction == entry_door:
           continue
         if not (room.CanMoveWithoutOpeningShutters(direction) or
                 room.CanDefeatEnemies(missing_item)):
@@ -138,7 +137,7 @@ class LevelMapper(object):
       for stairway_room in self.stairway_rooms[level_num]:
         if self._VisitStairwayRoom(stairway_room, level_num, stairway_letter):
           stairway_letter = stairway_letter + 1
-      self._VisitDungeonRoom(
+        self._VisitDungeonRoom(
           self.start_rooms[level_num],
           self.entrance_directions[level_num],
           level_num, missing_item=None, is_entrance=True)
